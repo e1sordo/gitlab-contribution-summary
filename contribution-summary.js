@@ -1,5 +1,5 @@
 function waitForElement(selector, callback) {
-  const observer = new MutationObserver(function(mutationsList) {
+  const observer = new MutationObserver(function (mutationsList) {
     for (const mutation of mutationsList) {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         const matchingElement = Array.from(mutation.addedNodes).find(node =>
@@ -17,11 +17,30 @@ function waitForElement(selector, callback) {
   observer.observe(document.body, { childList: true, subtree: true });
 };
 
+function determineDaysOrder() {
+  const firstG = document.querySelector('g');
+  const lastRect = firstG.querySelector('rect[title]:last-of-type');
+
+  let daysOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  if (lastRect) {
+    const match = lastRect.getAttribute('title').match(/.*(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);
+    if (match) {
+      const lastDay = match[1];
+      const lastDayIndex = daysOrder.indexOf(lastDay) + 1;
+      if (lastDayIndex !== -1) {
+        daysOrder = daysOrder.slice(lastDayIndex).concat(daysOrder.slice(0, lastDayIndex));
+      }
+    }
+  }
+
+  return daysOrder;
+};
+
 function injectStatsToPage(statistics) {
   const jsContribCalendar = document.querySelector('div.js-contrib-calendar');
   if (jsContribCalendar) {
     jsContribCalendar.style.position = 'relative';
-    
+
     const statsDiv = document.createElement('div');
     statsDiv.style.position = 'absolute';
     statsDiv.style.top = '16px';
@@ -32,20 +51,17 @@ function injectStatsToPage(statistics) {
     statsDiv.style.fontSize = '12px';
     statsDiv.style.fontStyle = 'italic';
     statsDiv.style.lineHeight = '17px';
-    statsDiv.style.color = '#0000008a';
-    
-    const sortedDays = Object.keys(statistics).sort((a, b) => {
-      const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-      return daysOrder.indexOf(a) - daysOrder.indexOf(b);
-    });
-    
+    statsDiv.style.color = 'rgba(14, 31, 53, 0.54)';
+
+    const daysOrder = determineDaysOrder();
+
     let statsString = '';
-    sortedDays.forEach(day => {
+    daysOrder.forEach(day => {
       const stat = statistics[day];
       const avg = stat.count > 0 ? (stat.totalContributions / stat.count).toFixed(1) : 0;
       statsString += `Total: ${stat.totalContributions}, \t\tAvg: ${avg}, \t🦾: ${stat.totalLevelGreaterThan1}\n`;
     });
-    
+
     statsDiv.textContent = statsString;
     jsContribCalendar.appendChild(statsDiv);
   } else {
@@ -56,7 +72,7 @@ function injectStatsToPage(statistics) {
 function main() {
   const targetSelector = "svg.contrib-calendar";
 
-  waitForElement(targetSelector, function(element) {
+  waitForElement(targetSelector, function (element) {
     console.log("Element is now available: ", element);
 
     const svgParent = document.querySelector(targetSelector);
