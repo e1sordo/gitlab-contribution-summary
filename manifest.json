@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "name": "Gitlab Contribution Summary",
+  "version": "1.0",
+
+  "description": "See user's contribution summary in their Gitlab profile",
+
+  "permissions": ["activeTab"],
+
+  "icons": {
+    "48": "icons/icon-48.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://gitlab.com/*"],
+      "js": ["contribution-summary.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
