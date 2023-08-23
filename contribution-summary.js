@@ -50,6 +50,7 @@ function injectStatsToPage(statistics) {
     statsDiv.style.paddingLeft = '10px';
     statsDiv.style.fontSize = '12px';
     statsDiv.style.fontStyle = 'italic';
+    statsDiv.style.fontFamily = 'monospace';
     statsDiv.style.lineHeight = '17px';
     statsDiv.style.color = 'rgba(14, 31, 53, 0.54)';
 
@@ -59,7 +60,7 @@ function injectStatsToPage(statistics) {
     daysOrder.forEach(day => {
       const stat = statistics[day];
       const avg = stat.count > 0 ? (stat.totalContributions / stat.count).toFixed(1) : 0;
-      statsString += `Total: ${stat.totalContributions}, \t\tAvg: ${avg}, \t🦾: ${stat.totalLevelGreaterThan1}\n`;
+      statsString += `Total: ${stat.totalContributions}, \tAvg: ${avg}, \t🦾: ${stat.totalLevelGreaterThan1}\n`;
     });
 
     statsDiv.textContent = statsString;
